@@ -1,5 +1,7 @@
 package lambda.part1.exercise;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import data.Person;
 import org.junit.Test;
@@ -13,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 public class Lambdas01Exercise {
 
+    //use Arrays.sort
     @Test
     public void sortPersonsByAge() {
         Person[] persons = {
@@ -21,8 +24,12 @@ public class Lambdas01Exercise {
                 new Person("name 2", "lastName 1", 30)
         };
 
-        // TODO use Arrays.sort
-
+        Arrays.sort(persons, new Comparator<Person>() {
+            @Override
+            public int compare(Person o1, Person o2) {
+                return -o1.getFirstName().compareTo(o2.getFirstName());
+            }
+        });
         assertArrayEquals(persons, new Person[]{
                 new Person("name 3", "lastName 3", 20),
                 new Person("name 2", "lastName 1", 30),
@@ -30,6 +37,7 @@ public class Lambdas01Exercise {
         });
     }
 
+    //use FluentIterable
     @Test
     public void findFirstWithAge30() {
         List<Person> persons = ImmutableList.of(
@@ -40,8 +48,11 @@ public class Lambdas01Exercise {
 
         Person person = null;
 
-        // TODO use FluentIterable
-
+        Optional<Person> personOptional = FluentIterable.from(persons).firstMatch(
+                (p) -> p.getLastName().equals("lastName 2"));
+        if (personOptional.isPresent()) {
+            person = personOptional.get();
+        }
         assertEquals(person, new Person("name 1", "lastName 2", 30));
     }
 }
