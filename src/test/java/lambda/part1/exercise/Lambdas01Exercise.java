@@ -48,7 +48,6 @@ public class Lambdas01Exercise {
 
         Person person = null;
 
-        // TODO use FluentIterable
 
         Optional<Person> personOptional = FluentIterable.from(persons).firstMatch(new Predicate<Person>() {
             @Override
