@@ -23,7 +23,7 @@ public class Lambdas01Exercise {
                 new Person("name 2", "lastName 1", 30)
         };
 
-        // TODO use Arrays.sort
+        // DONE: use Arrays.sort
         Arrays.sort(persons, new Comparator<Person>() {
             public int compare(Person o1, Person o2) {
                 return ((Integer)o1.getAge()).compareTo((Integer)o2.getAge());
@@ -48,7 +48,7 @@ public class Lambdas01Exercise {
 
         Person person = null;
 
-        // TODO use FluentIterable
+        // DONE: use FluentIterable
         final Optional<Person> personOptional =
                 FluentIterable.from(persons)
                         .firstMatch(p -> new Integer(p.getAge()).equals((Integer)30));
