@@ -1,6 +1,7 @@
 package lambda.part1.exercise;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import data.Person;
@@ -51,7 +52,11 @@ public class Lambdas01Exercise {
         // DONE: use FluentIterable
         final Optional<Person> personOptional =
                 FluentIterable.from(persons)
-                        .firstMatch(p -> new Integer(p.getAge()).equals((Integer)30));
+                        .firstMatch(new Predicate<Person>() {
+                                        public boolean apply(Person p) {
+                                            return p.getAge() == 30;
+                                        }
+                                    });
         person = personOptional.get();
 
         assertEquals(person, new Person("name 1", "lastName 2", 30));
