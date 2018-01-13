@@ -27,7 +27,7 @@ public class Lambdas01Exercise {
         // TODO use Arrays.sort
         Arrays.sort(persons, new Comparator<Person>() {
             public int compare(Person o1, Person o2) {
-                return Integer.compare(o1.getAge(),o2.getAge());
+                return Integer.compare(o1.getAge(), o2.getAge());
             }
         });
 
@@ -52,11 +52,11 @@ public class Lambdas01Exercise {
                 FluentIterable.from(persons)
                         .firstMatch(new Predicate<Person>() {
                             public boolean apply(Person p) {
-                                return p.getAge()==30;
+                                return p.getAge() == 30;
                             }
                         });
         if (personOptional.isPresent()) {
-            person=personOptional.get();
+            person = personOptional.get();
         }
 
         assertEquals(person, new Person("name 1", "lastName 2", 30));
