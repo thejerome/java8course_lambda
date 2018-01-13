@@ -23,7 +23,8 @@ public class Lambdas02Exercise {
                 new Person("name 2", "lastName 1", 30)
         };
 
-        Arrays.sort(persons, (p1, p2) -> -p1.getFirstName().compareTo(p2.getFirstName()));
+        Arrays.sort(persons, (p1, p2) -> Integer.valueOf(p1.getAge()).compareTo(Integer.valueOf
+                (p2.getAge())));
         assertArrayEquals(persons, new Person[]{
                 new Person("name 3", "lastName 3", 20),
                 new Person("name 2", "lastName 1", 30),
@@ -42,8 +43,8 @@ public class Lambdas02Exercise {
 
         Person person = null;
 
-        Optional<Person> personOptional = FluentIterable.from(persons).firstMatch((p) -> p.getLastName()
-                .equals("lastName 2"));
+        Optional<Person> personOptional = FluentIterable.from(persons).firstMatch((p) -> p.getAge()
+                == 30);
         //persons.stream().filter((p) -> p.getLastName().equals("lastName 2")).findFirst();
         if (personOptional.isPresent()) {
             person = personOptional.get();

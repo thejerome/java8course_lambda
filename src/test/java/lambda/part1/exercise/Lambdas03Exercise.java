@@ -61,14 +61,14 @@ public class Lambdas03Exercise {
     public void strSum() {
 
         final GenericProduct<String> prod = Lambdas03Exercise::stringProd;
-                                            //(h,i)->stringProd(h,i);
+        //(h,i)->stringProd(h,i);
 
         assertEquals(prod.prod("a", 2), "aa");
     }
 
     private final String delimiter = "-";
 
-    private String stringSumWithDelimeter(String s, int i) {
+    private String stringSumWithDelimiter(String s, int i) {
         final StringJoiner sj = new StringJoiner(delimiter);
         for (int j = 0; j < i; j++) {
             sj.add(s);
@@ -79,8 +79,8 @@ public class Lambdas03Exercise {
     //use stringSumWithDelimiter
     @Test
     public void strSum2() {
-        final GenericProduct<String> prod = this::stringSumWithDelimeter;
-                                            //(h,i)->stringSumWithDelimeter(h,i);
+        final GenericProduct<String> prod = this::stringSumWithDelimiter;
+        //(h,i)->stringSumWithDelimiter(h,i);
         assertEquals(prod.prod("a", 3), "a-a-a");
     }
 }
