@@ -14,10 +14,6 @@ public class ArrowNotationExercise {
     return person.getFirstName() + " " + person.getLastName();
   }
 
-  private static boolean compareAges(Person a, Person b) {
-    return a.getAge() >= b.getAge();
-  }
-
   //  private static int ageOfPersonWithTheLongestFullName(Person a, Person b) {
   //    Comparator.comparingInt(Person::)
   //  }
