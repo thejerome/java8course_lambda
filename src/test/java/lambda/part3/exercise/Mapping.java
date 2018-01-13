@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -33,7 +34,9 @@ public class Mapping {
         // [T1, T2, T3] -> (T -> R) -> [R1, R2, R3]
         public <R> MapHelper<R> map(Function<T, R> f) {
             // TODO
-            throw new UnsupportedOperationException();
+            final ArrayList<R> result = new ArrayList<>();
+            list.forEach(t -> result.add(f.apply(t)));
+            return new MapHelper<>(result);
         }
 
         // [T] -> (T -> [R]) -> [R]
@@ -74,6 +77,7 @@ public class Mapping {
                                 ))
                 );
 
+
         final List<Employee> mappedEmployees =
                 new MapHelper<>(employees)
                 /*
@@ -81,6 +85,18 @@ public class Mapping {
                 .map(TODO) // add 1 year to experience duration .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
                 .map(TODO) // replace qa with QA
                 * */
+                        .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
+                        .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
+                        .map(innerPropertyChanger(Employee::getJobHistory,
+                                change(JobHistoryEntry::getPosition,
+                                        "qa"::equals,
+                                        (jobHistoryEntry) -> jobHistoryEntry.withPosition("QA")
+                                        ),
+                                (jobHistoryEntries, employee) -> {
+                                    employee.withJobHistory(jobHistoryEntries);
+                                    return employee;
+                                }
+                        ))
                 .getList();
 
         final List<Employee> expectedResult =
@@ -106,6 +122,34 @@ public class Mapping {
                 );
 
         assertEquals(mappedEmployees, expectedResult);
+    }
+
+    private List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobHistory) {
+        return new MapHelper<>(jobHistory)
+                .map(jobHistoryEntry -> jobHistoryEntry.withDuration(jobHistoryEntry.getDuration()+ 1))
+                .getList();
+    }
+
+    private <T, U, R> Function<T, T> innerPropertyChanger (Function<T, List<R>> extractor,
+                                                        Function<R, R> changer,
+                                                        BiFunction<List<R>, T, T> save) {
+        return t -> save.apply(new MapHelper<>(extractor.apply(t))
+                    .map(changer)
+                    .getList(),
+                    t
+        );
+    }
+
+    private <T, R> Function<T, T> change(Function<T, R> extractor,
+                                         Predicate<R> predicate,
+                                         Function<T, T> changer) {
+        return t -> {
+            final R property = extractor.apply(t);
+            if (predicate.test(property)) {
+                return changer.apply(t);
+            }
+            return t;
+        };
     }
 
 
