@@ -14,7 +14,7 @@ public class ArrowNotationExercise {
     @Test
     public void getAge() {
         // Person -> Integer
-        final Function<Person, Integer> getAge = null; // TODO
+        final Function<Person, Integer> getAge = p -> p.getAge();
 
         assertEquals(Integer.valueOf(33), getAge.apply(new Person("", "", 33)));
     }
@@ -24,25 +24,34 @@ public class ArrowNotationExercise {
         // TODO use BiPredicate
         // compareAges: (Person, Person) -> boolean
 
-        throw new UnsupportedOperationException("Not implemented");
-        //assertEquals(true, compareAges.test(new Person("a", "b", 22), new Person("c", "d", 22)));
+        //throw new UnsupportedOperationException("Not implemented");
+        BiPredicate<Person, Person> compareAges = (x, y) -> x.getAge() >= y.getAge();
+        assertEquals(true, compareAges.test(new Person("a", "b", 22), new Person("c", "d", 22)));
     }
 
     // TODO
     // getFullName: Person -> String
+    private String getFullName(Person person){
+        return person.getFirstName() + " " + person.getLastName();
+    }
 
     // TODO
     // ageOfPersonWithTheLongestFullName: (Person -> String) -> (Person, Person) -> int
     //
+    private int ageOfPersonWithTheLongestFullName (Person person){
+        return person.getAge();
+    }
 
     @Test
     public void getAgeOfPersonWithTheLongestFullName() {
         // Person -> String
-        final Function<Person, String> getFullName = null; // TODO
+        final Function<Person, String> getFullName = p -> getFullName(p);
 
         // (Person, Person) -> Integer
         // TODO use ageOfPersonWithTheLongestFullName(getFullName)
-        final BiFunction<Person, Person, Integer> ageOfPersonWithTheLongestFullName = null;
+        final BiFunction<Person, Person, Integer> ageOfPersonWithTheLongestFullName =
+                (p1, p2) -> getFullName(p1).length() > getFullName(p2).length() ?
+                        ageOfPersonWithTheLongestFullName(p1) : ageOfPersonWithTheLongestFullName(p2);
 
         assertEquals(
                 Integer.valueOf(1),
