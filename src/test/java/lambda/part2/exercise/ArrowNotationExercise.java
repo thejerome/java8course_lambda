@@ -14,35 +14,36 @@ public class ArrowNotationExercise {
     @Test
     public void getAge() {
         // Person -> Integer
-        final Function<Person, Integer> getAge = null; // TODO
+        final Function<Person, Integer> getAge = Person::getAge;
 
         assertEquals(Integer.valueOf(33), getAge.apply(new Person("", "", 33)));
     }
 
     @Test
     public void compareAges() {
-        // TODO use BiPredicate
         // compareAges: (Person, Person) -> boolean
+        BiPredicate<Person, Person> compareAges = (p1,p2)-> p1.getAge() == p2.getAge();
 
-        throw new UnsupportedOperationException("Not implemented");
-        //assertEquals(true, compareAges.test(new Person("a", "b", 22), new Person("c", "d", 22)));
+         assertEquals(true, compareAges.test(new Person("a", "b", 22), new Person("c", "d", 22)));
     }
 
-    // TODO
-    // getFullName: Person -> String
+     // getFullName: Person -> String
+    public static String getFullName(Person person) {
+        return person.getFirstName() + person.getLastName();
+    }
 
-    // TODO
     // ageOfPersonWithTheLongestFullName: (Person -> String) -> (Person, Person) -> int
-    //
+    public static BiFunction<Person, Person, Integer> ageOfPersonWithTheLongestFullName(Function<Person, String> f) {
+        return (p1,p2) -> f.apply(p1).length() > f.apply(p2).length() ? p1.getAge() : p2.getAge();
+    }
 
     @Test
     public void getAgeOfPersonWithTheLongestFullName() {
         // Person -> String
-        final Function<Person, String> getFullName = null; // TODO
+        final Function<Person, String> getFullName =  ArrowNotationExercise::getFullName;
 
         // (Person, Person) -> Integer
-        // TODO use ageOfPersonWithTheLongestFullName(getFullName)
-        final BiFunction<Person, Person, Integer> ageOfPersonWithTheLongestFullName = null;
+        final BiFunction<Person, Person, Integer> ageOfPersonWithTheLongestFullName = ageOfPersonWithTheLongestFullName(getFullName);
 
         assertEquals(
                 Integer.valueOf(1),
