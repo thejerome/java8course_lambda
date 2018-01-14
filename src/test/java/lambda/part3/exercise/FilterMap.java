@@ -50,13 +50,11 @@ public class FilterMap {
         }
 
         public <R> LazyCollectionHelper<R> map(Function<T, R> function) {
-            // TODO
-            throw new UnsupportedOperationException();
+                       throw new UnsupportedOperationException();
         }
 
         public List<T> force() {
-            // TODO
-            throw new UnsupportedOperationException();
+                        throw new UnsupportedOperationException();
         }
     }
 }
