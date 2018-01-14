@@ -17,40 +17,6 @@ import static org.junit.Assert.assertEquals;
 
 public class Mapping {
 
-    private static class MapHelper<T> {
-        private final List<T> list;
-
-        public MapHelper(List<T> list) {
-            this.list = list;
-        }
-
-        public List<T> getList() {
-            return list;
-        }
-
-        // [T] -> (T -> R) -> [R]
-        // [T1, T2, T3] -> (T -> R) -> [R1, R2, R3]
-        public <R> MapHelper<R> map(Function<T, R> f) {
-            // TODO
-            final ArrayList<R> result = new ArrayList<>();
-            list.forEach(t -> result.add(f.apply(t)));
-            return new MapHelper<>(result);
-        }
-
-        // [T] -> (T -> [R]) -> [R]
-
-        // map: [T, T, T], T -> [R] => [[], [R1, R2], [R3, R4, R5]]
-        // flatMap: [T, T, T], T -> [R] => [R1, R2, R3, R4, R5]
-        public <R> MapHelper<R> flatMap(Function<T, List<R>> f) {
-            final List<R> result = new ArrayList<R>();
-            list.forEach((T t) ->
-                    f.apply(t).forEach(result::add)
-            );
-
-            return new MapHelper<R>(result);
-        }
-    }
-
     @Test
     public void mapping() {
         final List<Employee> employees =
@@ -91,10 +57,10 @@ public class Mapping {
                                         JobHistoryEntry::getPosition,
                                         "qa"::equals,
                                         (jobHistoryEntry) -> jobHistoryEntry.withPosition("QA")
-                                        ),
+                                ),
                                 (jobHistoryEntries, employee) -> employee.withJobHistory(jobHistoryEntries)
                         ))
-                .getList();
+                        .getList();
 
         final List<Employee> expectedResult =
                 Arrays.asList(
@@ -123,7 +89,7 @@ public class Mapping {
 
     private List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobHistory) {
         return new MapHelper<>(jobHistory)
-                .map(jobHistoryEntry -> jobHistoryEntry.withDuration(jobHistoryEntry.getDuration()+ 1))
+                .map(jobHistoryEntry -> jobHistoryEntry.withDuration(jobHistoryEntry.getDuration() + 1))
                 .getList();
     }
 
@@ -131,9 +97,9 @@ public class Mapping {
                                                               Function<R, R> changer,
                                                               BiFunction<List<R>, T, T> save) {
         return t -> save.apply(new MapHelper<>(extractor.apply(t))
-                    .map(changer)
-                    .getList(),
-                    t
+                        .map(changer)
+                        .getList(),
+                t
         );
     }
 
@@ -148,111 +114,6 @@ public class Mapping {
             return t;
         };
     }
-
-
-    private static class LazyMapHelper<T, R> {
-
-        private final List<T> list;
-        private final Function<T, R> function;
-
-        public LazyMapHelper(List<T> list, Function<T, R> function) {
-            this.list = list;
-            this.function = function;
-        }
-
-        public static <T> LazyMapHelper<T, T> from(List<T> list) {
-            return new LazyMapHelper<>(list, Function.identity());
-        }
-
-        public List<R> force() {
-            // TODO
-            final List<R> result = new ArrayList<>();
-            list.forEach(t -> result.add(function.apply(t)));
-            return result;
-        }
-
-        public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
-            // TODO
-            final Function<T, R2> newFunction = function.andThen(f);
-            return new LazyMapHelper<>(list, newFunction);
-        }
-
-    }
-
-
-    private static class LazyFlatMapHelper<T, R> {
-        private final List<T> list;
-        private final Function<T, List<R>> function;
-
-        public LazyFlatMapHelper(List<T> list, Function<T, List<R>> function) {
-            this.list = list;
-            this.function = function;
-        }
-
-        public static <T> LazyFlatMapHelper<T, T> from(List<T> list) {
-            return new LazyFlatMapHelper<>(list, (T t) -> {
-                final ArrayList<T> ts = new ArrayList<>();
-                ts.add(t);
-                return ts;
-            });
-        }
-
-        public List<R> force() {
-            // TODO
-            final List<R> result = new ArrayList<>();
-
-            list.forEach(t -> result.addAll(function.apply(t)));
-
-            return result;
-        }
-
-        // TODO filter
-        // (T -> boolean) -> (T -> [T])
-        // filter: [T1, T2] -> (T -> boolean) -> [T2]
-        // flatMap": [T1, T2] -> (T -> [T]) -> [T2]
-
-        public LazyFlatMapHelper<T, R> filter (Predicate<R> predicate) {
-            return map(
-                    (t) -> {
-                        if(predicate.test(t)){
-                            return t;
-                        }
-                        return null;
-                    }
-            );
-        }
-
-
-        public <R2> LazyFlatMapHelper<T, R2> map(Function<R, R2> f) {
-            final Function<R, List<R2>> listFunction = rR2TorListR2(f);
-            return flatMap(listFunction);
-        }
-
-        // (R -> R2) -> (R -> [R2])
-        private <R2> Function<R, List<R2>> rR2TorListR2(Function<R, R2> f) {
-            return t -> {
-                final ArrayList<R2> r2s = new ArrayList<>();
-                r2s.add(f.apply(t));
-                return r2s;
-            };
-        }
-
-        // TODO *
-        public <R2> LazyFlatMapHelper<T, R2> flatMap(Function<R, List<R2>> f) {
-            final Function<T, List<R2>> listListFunction = function.andThen(listToListFunction(f));
-            return new LazyFlatMapHelper<>(list, listListFunction);
-        }
-
-        private <U, UR> Function<List<U>, List<UR>> listToListFunction(Function<U, List<UR>> f) {
-            return list -> {
-                final ArrayList<UR> newList = new ArrayList<>();
-                list.forEach(e -> newList.addAll(f.apply(e)));
-                return newList;
-            };
-        }
-    }
-
-
 
     @Test
     public void lazy_mapping() {
@@ -296,7 +157,7 @@ public class Mapping {
                                 ),
                                 (jobHistoryEntries, employee) -> employee.withJobHistory(jobHistoryEntries)
                         ))
-                .force();
+                        .force();
 
         final List<Employee> expectedResult =
                 Arrays.asList(
@@ -321,5 +182,139 @@ public class Mapping {
                 );
 
         assertEquals(mappedEmployees, expectedResult);
+    }
+
+    private static class MapHelper<T> {
+        private final List<T> list;
+
+        public MapHelper(List<T> list) {
+            this.list = list;
+        }
+
+        public List<T> getList() {
+            return list;
+        }
+
+        // [T] -> (T -> R) -> [R]
+        // [T1, T2, T3] -> (T -> R) -> [R1, R2, R3]
+        public <R> MapHelper<R> map(Function<T, R> f) {
+            // TODO
+            final ArrayList<R> result = new ArrayList<>();
+            list.forEach(t -> result.add(f.apply(t)));
+            return new MapHelper<>(result);
+        }
+
+        // [T] -> (T -> [R]) -> [R]
+
+        // map: [T, T, T], T -> [R] => [[], [R1, R2], [R3, R4, R5]]
+        // flatMap: [T, T, T], T -> [R] => [R1, R2, R3, R4, R5]
+        public <R> MapHelper<R> flatMap(Function<T, List<R>> f) {
+            final List<R> result = new ArrayList<R>();
+            list.forEach((T t) ->
+                    f.apply(t).forEach(result::add)
+            );
+
+            return new MapHelper<R>(result);
+        }
+    }
+
+    private static class LazyMapHelper<T, R> {
+
+        private final List<T> list;
+        private final Function<T, R> function;
+
+        public LazyMapHelper(List<T> list, Function<T, R> function) {
+            this.list = list;
+            this.function = function;
+        }
+
+        public static <T> LazyMapHelper<T, T> from(List<T> list) {
+            return new LazyMapHelper<>(list, Function.identity());
+        }
+
+        public List<R> force() {
+            // TODO
+            final List<R> result = new ArrayList<>();
+            list.forEach(t -> result.add(function.apply(t)));
+            return result;
+        }
+
+        public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
+            // TODO
+            final Function<T, R2> newFunction = function.andThen(f);
+            return new LazyMapHelper<>(list, newFunction);
+        }
+
+    }
+
+    private static class LazyFlatMapHelper<T, R> {
+        private final List<T> list;
+        private final Function<T, List<R>> function;
+
+        public LazyFlatMapHelper(List<T> list, Function<T, List<R>> function) {
+            this.list = list;
+            this.function = function;
+        }
+
+        public static <T> LazyFlatMapHelper<T, T> from(List<T> list) {
+            return new LazyFlatMapHelper<>(list, (T t) -> {
+                final ArrayList<T> ts = new ArrayList<>();
+                ts.add(t);
+                return ts;
+            });
+        }
+
+        public List<R> force() {
+            // TODO
+            final List<R> result = new ArrayList<>();
+
+            list.forEach(t -> result.addAll(function.apply(t)));
+
+            return result;
+        }
+
+        // TODO filter
+        // (T -> boolean) -> (T -> [T])
+        // filter: [T1, T2] -> (T -> boolean) -> [T2]
+        // flatMap": [T1, T2] -> (T -> [T]) -> [T2]
+
+        public LazyFlatMapHelper<T, R> filter(Predicate<R> predicate) {
+            return map(
+                    (t) -> {
+                        if (predicate.test(t)) {
+                            return t;
+                        }
+                        return null;
+                    }
+            );
+        }
+
+        public <R2> LazyFlatMapHelper<T, R2> map(Function<R, R2> f) {
+            final Function<R, List<R2>> listFunction = rR2TorListR2(f);
+            return flatMap(listFunction);
+        }
+
+        // (R -> R2) -> (R -> [R2])
+        private <R2> Function<R, List<R2>> rR2TorListR2(Function<R, R2> f) {
+            return t -> {
+                final ArrayList<R2> r2s = new ArrayList<>();
+                r2s.add(f.apply(t));
+                return r2s;
+            };
+        }
+
+        // TODO *
+        public <R2> LazyFlatMapHelper<T, R2> flatMap(Function<R, List<R2>> f) {
+            final Function<T, List<R2>> listListFunction = function.andThen(listToListFunction(f));
+            return new LazyFlatMapHelper<>(list, listListFunction);
+        }
+
+        private <U, UR> Function<List<U>, List<UR>> listToListFunction(Function<U, List<UR>> f) {
+            return list -> {
+                final ArrayList<UR> newList = new ArrayList<>();
+                list.forEach(e -> newList.addAll(f.apply(e)));
+                return newList;
+            };
+        }
     }
 }
