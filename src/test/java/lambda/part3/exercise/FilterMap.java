@@ -60,8 +60,6 @@ public class FilterMap {
         public List<T> force() {
             // TODO
 
-
-
             throw new UnsupportedOperationException();
         }
     }
