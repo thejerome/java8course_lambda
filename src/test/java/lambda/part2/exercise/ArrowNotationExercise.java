@@ -28,10 +28,10 @@ public class ArrowNotationExercise {
         assertEquals(true, compareAges.test(new Person("a", "b", 22), new Person("c", "d", 22)));
     }
 
-    // TODO
+
     // getFullName: Person -> String
 
-    // TODO
+
     // ageOfPersonWithTheLongestFullName: (Person -> String) -> (Person, Person) -> int
     //
 
