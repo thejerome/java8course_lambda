@@ -1,5 +1,6 @@
 package lambda.part1.exercise;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import data.Person;
 import org.junit.Test;
@@ -41,6 +42,10 @@ public class Lambdas01Exercise {
         Person person = null;
 
         // TODO use FluentIterable
+        person = FluentIterable.from(persons)
+                .filter(p -> p.getAge() == 30)
+                .first().get();
+
 
         assertEquals(person, new Person("name 1", "lastName 2", 30));
     }

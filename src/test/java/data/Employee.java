@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Employee {
-    private final Person person;
-    private final List<JobHistoryEntry> jobHistory;
+    private final data.Person person;
+    private final List<data.JobHistoryEntry> jobHistory;
 
     public Employee(Person person, List<JobHistoryEntry> jobHistory) {
         this.person = person;
