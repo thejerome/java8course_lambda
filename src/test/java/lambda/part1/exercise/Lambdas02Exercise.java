@@ -3,6 +3,7 @@ package lambda.part1.exercise;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import data.Person;
 import java.util.Arrays;
@@ -40,6 +41,9 @@ public class Lambdas02Exercise {
     Person person = null;
 
     // TODO use FluentIterable
+    person = FluentIterable.from(persons)
+                           .firstMatch(p -> p.getAge() == 30)
+                           .get();
 
     assertEquals(person, new Person("name 1", "lastName 2", 30));
   }
