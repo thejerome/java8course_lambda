@@ -44,9 +44,8 @@ public class Mapping {
         public <R> MapHelper<R> flatMap(Function<T, List<R>> f) {
             final List<R> result = new ArrayList<R>();
             list.forEach((T t) ->
-                    f.apply(t).forEach(result::add)
+                    result.addAll(f.apply(t))
             );
-
             return new MapHelper<R>(result);
         }
     }
