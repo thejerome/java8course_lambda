@@ -18,21 +18,28 @@ public class Lambdas03Exercise {
 
     @Test
     public void generic0() {
-        final GenericProduct<Integer> prod = null; // Use anonymous class
+        final GenericProduct<Integer> prod = new GenericProduct<Integer>() {
+            @Override
+            public Integer prod(Integer a, int i) {
+                return a * i;
+            }
+        }; // Use anonymous class
 
         assertEquals(prod.prod(3, 2), Integer.valueOf(6));
     }
 
     @Test
     public void generic1() {
-        final GenericProduct<Integer> prod = null; // Use statement lambda
+        final GenericProduct<Integer> prod = ((a, b) -> {
+            return a * b;
+        }); // Use statement lambda
 
         assertEquals(prod.prod(3, 2), Integer.valueOf(6));
     }
 
     @Test
     public void generic2() {
-        final GenericProduct<Integer> prod = null; // Use expression lambda
+        final GenericProduct<Integer> prod = ((a, b) -> a * b); // Use expression lambda
 
         assertEquals(prod.prod(3, 2), Integer.valueOf(6));
     }
@@ -47,7 +54,16 @@ public class Lambdas03Exercise {
 
     @Test
     public void strSum() {
-        final GenericProduct<String> prod = null; // use stringProd;
+        final GenericProduct<String> prod = new GenericProduct<String>() {
+            @Override
+            public String prod(String a, int i) {
+                String result = "";
+                for (int j = 0; j < i; j++) {
+                    result += a;
+                }
+                return result;
+            }
+        }; // use stringProd;
 
         assertEquals(prod.prod("a", 2), "aa");
     }
@@ -64,7 +80,12 @@ public class Lambdas03Exercise {
 
     @Test
     public void strSum2() {
-        final GenericProduct<String> prod = null; // use stringSumWithDelimeter;
+        final GenericProduct<String> prod = new GenericProduct<String>() {
+            @Override
+            public String prod(String a, int i) {
+                return stringSumWithDelimeter(a, i);
+            }
+        }; // use stringSumWithDelimeter;
 
         assertEquals(prod.prod("a", 3), "a-a-a");
     }
