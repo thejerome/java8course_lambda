@@ -13,7 +13,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -34,7 +33,7 @@ public class Mapping {
         // [T1, T2, T3] -> (T -> R) -> [R1, R2, R3]
         public <R> MapHelper<R> map(Function<T, R> f) {
             List<R> result = new ArrayList<>();
-            list.stream().forEach(T -> result.add(f.apply(T)));
+            list.forEach(t -> result.add(f.apply(t)));
             return new MapHelper<>(result);
         }
 
@@ -109,16 +108,21 @@ public class Mapping {
     }
 
     private List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobHistory) {
-        return jobHistory.stream()
-                .map(j -> j.withDuration(j.getDuration() + 1))
-                .collect(Collectors.toList());
+        List<JobHistoryEntry> result = new ArrayList<>();
+        for (JobHistoryEntry j : jobHistory) {
+            result.add(j.withDuration(j.getDuration() + 1));
+        }
+        return result;
     }
 
     private List<JobHistoryEntry> replaceQA(List<JobHistoryEntry> jobHistory) {
+        List<JobHistoryEntry> result = new ArrayList<>();
         String qa = "qa";
-        return jobHistory.stream()
-                .map(j -> (j.getPosition().equals(qa)) ? j.withPosition(qa.toUpperCase()) : j)
-                .collect(Collectors.toList());
+        for (JobHistoryEntry j : jobHistory) {
+            result.add((j.getPosition().equals(qa)) ? j.withPosition(qa.toUpperCase()) : j);
+        }
+        
+        return result;
     }
 
     private static class LazyMapHelper<T, R> {
@@ -139,8 +143,11 @@ public class Mapping {
         }
 
         public List<R> force() {
-            return list.stream()
-                    .map(t -> function.apply(t)).collect(Collectors.toList());
+            List<R> result = new ArrayList<>();
+            for (T t : list) {
+                result.add(function.apply(t));
+            }
+            return result;
         }
 
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
