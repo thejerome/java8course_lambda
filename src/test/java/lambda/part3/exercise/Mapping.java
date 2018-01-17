@@ -21,10 +21,12 @@ public class Mapping {
     private static class MapHelper<T> {
         private final List<T> list;
 
+        // constructor
         public MapHelper(List<T> list) {
             this.list = list;
         }
 
+        // list getter
         public List<T> getList() {
             return list;
         }
@@ -32,8 +34,11 @@ public class Mapping {
         // [T] -> (T -> R) -> [R]
         // [T1, T2, T3] -> (T -> R) -> [R1, R2, R3]
         public <R> MapHelper<R> map(Function<T, R> f) {
-            // TODO
-            throw new UnsupportedOperationException();
+            // DONE:
+            //throw new UnsupportedOperationException();
+            final List<R> result = new ArrayList<R>();
+            list.forEach((t) -> result.add(f.apply(t)));
+            return new MapHelper<>(result);
         }
 
         // [T] -> (T -> [R]) -> [R]
