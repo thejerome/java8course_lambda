@@ -117,12 +117,12 @@ public class Mapping {
 
     private List<JobHistoryEntry> replaceQa(List<JobHistoryEntry> jobHistory) {
         Function<JobHistoryEntry, JobHistoryEntry> function =
-                p -> p.getPosition().equals("qa") ? p.withPosition("QA") : p.withPosition(p.getPosition());
+                p -> p.getPosition().equals("qa") ? p.withPosition("QA") : p;
 
         MapHelper<JobHistoryEntry> result = new MapHelper<>(jobHistory);
-        result.map(function);
+        MapHelper<JobHistoryEntry> maplist = result.map(function);
 
-        return result.getList();
+        return maplist.getList();
     }
 
     private List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobHistory) {
@@ -131,9 +131,9 @@ public class Mapping {
                 = p -> p.withDuration(p.getDuration() + 1);
 
         MapHelper<JobHistoryEntry> result = new MapHelper<>(jobHistory);
-        result.map(function);
+        MapHelper<JobHistoryEntry> maplist = result.map(function);
 
-        return result.getList();
+        return maplist.getList();
     }
 
 
