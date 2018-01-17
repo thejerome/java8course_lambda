@@ -3,7 +3,6 @@ package lambda.part3.exercise;
 import data.Employee;
 import data.JobHistoryEntry;
 import data.Person;
-import java.util.stream.Collectors;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -145,8 +144,9 @@ public class Mapping {
         }
 
         public List<R> force() {
-            return list.stream()
-                .map(t -> function.apply(t)).collect(Collectors.toList());
+            List<R> result = new ArrayList<>();
+            list.forEach(t -> result.add(function.apply(t)));
+            return result;
         }
 
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
