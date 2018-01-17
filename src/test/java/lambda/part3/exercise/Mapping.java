@@ -31,7 +31,7 @@ public class Mapping {
         // [T1, T2, T3] -> (T -> R) -> [R1, R2, R3]
         public <R> MapHelper<R> map(Function<T, R> f) {
             List<R> result = new ArrayList<>();
-            list.stream().forEach(T -> result.add(f.apply(T)));
+            list.forEach(T -> result.add(f.apply(T)));
             return new MapHelper<>(result);
         }
 
@@ -105,18 +105,25 @@ public class Mapping {
         assertEquals(mappedEmployees, expectedResult);
     }
 
-        private List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobHistory) {
-                return jobHistory.stream()
-                            .map(j -> j.withDuration(j.getDuration() + 1))
-                            .collect(Collectors.toList());
-            }
+    private List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobHistory) {
+      List<JobHistoryEntry> list = new ArrayList<>();
 
-         private List<JobHistoryEntry> replaceQA(List<JobHistoryEntry> jobHistory) {
-                String qa = "qa";
-                return jobHistory.stream()
-                            .map(j -> (j.getPosition().equals(qa)) ? j.withPosition(qa.toUpperCase()) : j)
-                            .collect(Collectors.toList());
-            }
+      for (JobHistoryEntry jobHistoryEntry : jobHistory) {
+        list.add(jobHistoryEntry.withDuration(jobHistoryEntry.getDuration() + 1));
+      }
+
+      return list;
+    }
+
+    private List<JobHistoryEntry> replaceQA(List<JobHistoryEntry> jobHistory) {
+      List<JobHistoryEntry> list = new ArrayList<>();
+
+      for (JobHistoryEntry jobHistoryEntry : jobHistory) {
+        list.add(jobHistoryEntry.getPosition().equals("qa") ? jobHistoryEntry.withPosition("QA") : jobHistoryEntry);
+      }
+
+      return list;
+    }
 
 
     private static class LazyMapHelper<T, R> {
@@ -137,7 +144,12 @@ public class Mapping {
         }
 
         public List<R> force() {
-            return list.stream().map(t -> function.apply(t)).collect(Collectors.toList());
+          List<R> rList = new ArrayList<>();
+          for (T t : list) {
+            rList.add(function.apply(t));
+          }
+
+          return rList;
         }
 
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
