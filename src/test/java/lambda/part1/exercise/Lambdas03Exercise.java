@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 public class Lambdas03Exercise {
 
     private interface GenericProduct<T> {
+
         T prod(T a, int i);
 
         default T twice(T t) {
@@ -30,7 +31,9 @@ public class Lambdas03Exercise {
 
     @Test
     public void generic1() {
-        final GenericProduct<Integer> prod = (Integer a, int i) -> a * i; // Use statement lambda
+        final GenericProduct<Integer> prod = (Integer a, int i) -> {
+            return a * i;
+        };
 
         assertEquals(prod.prod(3, 2), Integer.valueOf(6));
     }
