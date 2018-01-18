@@ -13,6 +13,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -55,6 +56,31 @@ public class Mapping {
         }
     }
 
+    /**
+     * Adds one year to every job history entry.
+     *
+     * @param jobs - source list
+     * @return list with modified history
+     */
+    private static List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobs) {
+        return jobs.stream()
+                .map(j -> j.withDuration(j.getDuration() + 1))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Replaces 'qa' with 'QA' to every job history entry.
+     *
+     * @param jobs - source list
+     * @return list with modified history
+     */
+    private static List<JobHistoryEntry> replaceQA(List<JobHistoryEntry> jobs) {
+        return jobs.stream()
+                .map(j -> j.withPosition(j.getPosition().replace("qa", "QA")))
+                .collect(Collectors.toList());
+    }
+
+
     @Test
     public void mapping() {
         final List<Employee> employees =
@@ -84,7 +110,7 @@ public class Mapping {
 
                 .map(e -> e.withPerson(e.getPerson().withFirstName("John"))) // change name to John .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
                 .map(e -> e.withJobHistory(addOneYear(e.getJobHistory()))) // add 1 year to experience duration .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
-                .map(TODO) // replace qa with QA
+                .map(e -> e.withJobHistory(replaceQA(e.getJobHistory()))) //DONE: replace qa with QA
                 .getList();
 
         final List<Employee> expectedResult =
