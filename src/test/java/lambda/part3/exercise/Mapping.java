@@ -62,7 +62,7 @@ public class Mapping {
      * @param jobs - source list
      * @return list with modified history
      */
-    private static List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobs) {
+    public static List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobs) {
         return jobs.stream()
                 .map(j -> j.withDuration(j.getDuration() + 1))
                 .collect(Collectors.toList());
@@ -74,7 +74,7 @@ public class Mapping {
      * @param jobs - source list
      * @return list with modified history
      */
-    private static List<JobHistoryEntry> replaceQA(List<JobHistoryEntry> jobs) {
+    static List<JobHistoryEntry> replaceQA(List<JobHistoryEntry> jobs) {
         return jobs.stream()
                 .map(j -> j.withPosition(j.getPosition().replace("qa", "QA")))
                 .collect(Collectors.toList());
@@ -141,7 +141,12 @@ public class Mapping {
 
     private static class LazyMapHelper<T, R> {
 
+        final List<T> list;
+        final Function<T, R> function;
+
         public LazyMapHelper(List<T> list, Function<T, R> function) {
+            this.list = list;
+            this.function = function;
         }
 
         public static <T> LazyMapHelper<T, T> from(List<T> list) {
@@ -149,20 +154,29 @@ public class Mapping {
         }
 
         public List<R> force() {
-            // TODO
-            throw new UnsupportedOperationException();
+            // DONE
+            //throw new UnsupportedOperationException();
+            return list.stream()
+                    .map(function)
+                    .collect(Collectors.toList());
         }
 
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
-            // TODO
-            throw new UnsupportedOperationException();
+            // DONE
+            //throw new UnsupportedOperationException();
+            return new LazyMapHelper(list, (l) -> f.apply(function.apply((T)l)));
         }
 
     }
 
     private static class LazyFlatMapHelper<T, R> {
 
+        final List<T> list;
+        final Function<T, List<R>> function;
+
         public LazyFlatMapHelper(List<T> list, Function<T, List<R>> function) {
+            this.list = list;
+            this.function = function;
         }
 
         public static <T> LazyFlatMapHelper<T, T> from(List<T> list) {
@@ -223,11 +237,10 @@ public class Mapping {
 
         final List<Employee> mappedEmployees =
                 LazyMapHelper.from(employees)
-                /*
-                .map(TODO) // change name to John
-                .map(TODO) // add 1 year to experience duration
-                .map(TODO) // replace qa with QA
-                * */
+                        // DONE
+                        .map(e -> e.withPerson(e.getPerson().withFirstName("John"))) // change name to John
+                        .map(e -> e.withJobHistory(addOneYear(e.getJobHistory()))) // add 1 year to experience duration
+                        .map(e -> e.withJobHistory(replaceQA(e.getJobHistory()))) // replace qa with QA
                 .force();
 
         final List<Employee> expectedResult =
