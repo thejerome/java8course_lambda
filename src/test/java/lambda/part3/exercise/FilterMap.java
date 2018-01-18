@@ -7,6 +7,11 @@ import java.util.function.Predicate;
 
 public class FilterMap {
 
+    /**
+     * Container.
+     * @param <T> predicate type
+     * @param <R> function's parameter type
+     */
     public static class Container<T, R> {
         private final Predicate<T> predicate;
         private final Function<T, R> function;
@@ -30,6 +35,10 @@ public class FilterMap {
         }
     }
 
+    /**
+     * LazyCollectionHelper.
+     * @param <T> List-entry type
+     */
     public static class LazyCollectionHelper<T> {
         private final List<Container<Object, Object>> actions;
         private final List<T> list;
