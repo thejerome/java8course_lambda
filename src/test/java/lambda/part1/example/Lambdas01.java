@@ -21,6 +21,8 @@ import static org.junit.Assert.assertEquals;
 
 // https://github.com/java8-course/lambda
 
+// try it out with commit (trigger travis)
+
 public class Lambdas01 {
 
     @Test
